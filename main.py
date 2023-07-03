@@ -7,7 +7,7 @@ import time
 import cv2
 
 # create reinforcement learning environment
-style.use("ggplot")
+#style.use("ggplot")
 
 size = 10
 episodes = 25_000
@@ -15,15 +15,17 @@ movePenalty = 1
 enemyPenalty = 300
 foodReward = 25
 
-epsilon = 0.2
-epsilonDecay = 0.9998
+epsilon = 0.5
+epsilonDecay = 0.98
 
-showEvery = 3_000
+showEvery = 5_000
 
 startQ = None #'qtable-1688339047.pickle' # None  # or filename
 
 learningRate = 0.1
 discount = 0.95
+
+actionsCount = 4
 
 from enum import Enum
 
@@ -50,7 +52,7 @@ if startQ is None:
                 for y2 in range(-size + 1, size):
                     # we have 4 discreet actions, so we need 4 values for each combination
                     q[((x1, y1), (x2, y2))] = [
-                        np.random.uniform(-5, 0) for i in range(4)
+                        np.random.uniform(-5, 0) for i in range(actionsCount)
                     ]
 else:
     with open(startQ, "rb") as f:
@@ -65,7 +67,7 @@ for episode in range(episodes):
     food = Blob(size)
     enemy = Blob(size)
 
-    if episode % showEvery == 0:
+    if (episode+1) % showEvery == 0:
         print(f"on # {episode}, epsilon: {epsilon}")
         print(f"{showEvery} ep mean {np.mean(episodeRewards[-showEvery:])}")
         show = True
@@ -73,12 +75,12 @@ for episode in range(episodes):
         show = False
 
     episodeReward = 0
-    for i in range(200):
+    for i in range(500):
         currentObservation = (player - food, player - enemy)
         if np.random.random() > epsilon:
             action = np.argmax(q[currentObservation])
         else:
-            action = np.random.randint(0, 4)
+            action = np.random.randint(0, actionsCount)
 
         player.action(action)
 
@@ -137,9 +139,9 @@ for episode in range(episodes):
 movingAverage = np.convolve(episodeRewards,np.ones((showEvery,)) / showEvery, mode="valid")   
 
 plt.plot([i for i in range(len(movingAverage))],movingAverage)
-plt.ylabel(f'reward {showEvery}ma')
+plt.ylabel(f'reward {showEvery}')
 plt.xlabel("episode #")
 plt.show()
 
-with open(f'qtable-{int(time.time())}.pickle','wb') as f:
-    pickle.dump(q,f)
+# with open(f'qtable-{int(time.time())}.pickle','wb') as f:
+#     pickle.dump(q,f)

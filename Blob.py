@@ -13,14 +13,23 @@ class Blob:
         return (self.x - other.x,self.y-other.y)
     
     def action(self, choice):
-        if choice == 0:
-            self.move(x=1,y=1)
-        elif choice ==1:
-            self.move(x=-1,y=-1)
-        elif choice ==2:
-            self.move(x=-1,y=1)
-        elif choice ==3:
-            self.move(x=1,y=-1)
+        choice+=5
+        # if choice == 0:
+        #     self.move(x=1,y=1)
+        # elif choice ==1:
+        #     self.move(x=-1,y=-1)
+        # elif choice ==2:
+        #     self.move(x=-1,y=1)
+        # elif choice ==3:
+        #     self.move(x=1,y=-1)
+        if choice ==5:
+            self.move(x=1,y=0)
+        elif choice ==6:
+            self.move(x=0,y=1)
+        elif choice ==7:
+            self.move(x=-1,y=0)
+        elif choice ==8:
+            self.move(x=0,y=-1)
 
 
     def move(self,x=False,y=False):
