@@ -76,9 +76,13 @@ for episode in range(episodes):
 
     episodeReward = 0
     for i in range(500):
-        currentObservation = (player - food, player - enemy)
+
+        #s(t)
+        currentState = (player - food, player - enemy)
+
+        #a(t)
         if np.random.random() > epsilon:
-            action = np.argmax(q[currentObservation])
+            action = np.argmax(q[currentState])
         else:
             action = np.random.randint(0, actionsCount)
 
@@ -95,9 +99,14 @@ for episode in range(episodes):
         else:
             reward = -movePenalty
 
-        newObservation = (player - food, player - enemy)
-        maxFutureQ = np.max(q[newObservation])
-        currentQ = q[newObservation][action] 
+        nextState = (player - food, player - enemy)
+
+        # max ( Q(s(t+1), a(t)) )
+        maxFutureQ = np.max(q[nextState])
+        #currentQ = q[nextState][action]
+
+        # Q (s(t), a(t))
+        currentQ = q[currentState][action] 
 
         if reward == foodReward:
             newQ = foodReward
@@ -108,7 +117,9 @@ for episode in range(episodes):
                 reward + discount * maxFutureQ
             )
 
-        q[newObservation][action] = newQ
+        #q[nextState][action] = newQ
+        #update Q (s(t), a(t) )
+        q[currentState][action] = newQ
 
         #https://docs.python.org/3/library/enum.html
         if show:
